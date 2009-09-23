@@ -1,0 +1,24 @@
+-------------------------------------------------------------------------------
+Test set: org.sugis.intervalmap.IntervalTestCase
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 4, Errors: 0, Skipped: 0, Time elapsed: 0.061 sec <<< FAILURE!
+testHashCode(org.sugis.intervalmap.IntervalTestCase)  Time elapsed: 0.007 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: Not yet implemented
+	at junit.framework.Assert.fail(Assert.java:47)
+	at org.sugis.intervalmap.IntervalTestCase.testHashCode(IntervalTestCase.java:26)
+
+testGetLowerBound(org.sugis.intervalmap.IntervalTestCase)  Time elapsed: 0.001 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: Not yet implemented
+	at junit.framework.Assert.fail(Assert.java:47)
+	at org.sugis.intervalmap.IntervalTestCase.testGetLowerBound(IntervalTestCase.java:34)
+
+testGetUpperBound(org.sugis.intervalmap.IntervalTestCase)  Time elapsed: 0.002 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: Not yet implemented
+	at junit.framework.Assert.fail(Assert.java:47)
+	at org.sugis.intervalmap.IntervalTestCase.testGetUpperBound(IntervalTestCase.java:42)
+
+testEqualsObject(org.sugis.intervalmap.IntervalTestCase)  Time elapsed: 0.001 sec  <<< FAILURE!
+junit.framework.AssertionFailedError: Not yet implemented
+	at junit.framework.Assert.fail(Assert.java:47)
+	at org.sugis.intervalmap.IntervalTestCase.testEqualsObject(IntervalTestCase.java:50)
+
