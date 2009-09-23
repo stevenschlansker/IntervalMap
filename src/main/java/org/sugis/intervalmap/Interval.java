@@ -31,6 +31,17 @@ public class Interval<K extends Comparable<K>> {
 	}
 	
 	/**
+	 * Determine if two Intervals overlap.  Two intervals that share
+	 * a bound are considered to overlap for the purposes of this method.
+	 * @param other the other Interval to check
+	 * @return true if they overlap
+	 */
+	public boolean overlapsWith(@Nonnull Interval<K> other) {
+	    return lower.compareTo(other.getUpperBound()) <= 0 &&
+	           upper.compareTo(other.getLowerBound()) >= 0;
+	}
+	
+	/**
 	 * @return the lower bound given at construction
 	 */
 	public K getLowerBound() { return lower; }

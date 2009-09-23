@@ -9,7 +9,7 @@ import junit.framework.TestCase;
  */
 public class IntervalTestCase extends TestCase {
 
-	private Interval<Integer> test1 = new Interval<Integer>(1, 5),
+	private Interval<Integer> test1 = new Interval<Integer>(1, 4),
 		test2 = new Interval<Integer>(4, 5),
 		test3 = new Interval<Integer>(5, 10);
 	
@@ -42,7 +42,7 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#getUpperBound()
 	 */
 	public void testGetUpperBound() {
-		assertEquals(test1.getUpperBound(), test2.getUpperBound());
+		assertEquals(test1.getUpperBound(), test2.getLowerBound());
 		assertEquals(test2.getUpperBound(), test3.getLowerBound());
 	}
 
@@ -51,7 +51,7 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#equals(Object)
 	 */
 	public void testEqualsObject() {
-		assertEquals(test1, new Interval<Integer>(1, 5));
+		assertEquals(test1, new Interval<Integer>(1, 4));
 		assertEquals(test2, new Interval<Integer>(4, 5));
 		assertNotEquals(test1, test2);
 	}
@@ -66,9 +66,19 @@ public class IntervalTestCase extends TestCase {
 	 */
 	public void testSwappedBounds() {
 		assertEquals(new Interval<Integer>(1, 10),
-				new Interval<Integer>(10,1));
+				new Interval<Integer>(10, 1));
 		assertEquals(new Interval<Double>(.6, .888),
 				new Interval<Double>(.888, .6));
+	}
+	
+	/**
+	 * Test overlaps
+	 * @see Interval#overlapsWith(Interval)
+	 */
+	public void testOverlapsWith() {
+		assertTrue(test1.overlapsWith(test2));
+		assertTrue(test2.overlapsWith(test3));
+		assertFalse(test1.overlapsWith(test3));
 	}
 
 }
