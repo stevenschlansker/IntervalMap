@@ -10,8 +10,8 @@ import junit.framework.TestCase;
 public class IntervalTestCase extends TestCase {
 
 	private Interval<Integer> test1 = new Interval<Integer>(1, 5),
-		test2 = new Interval<Integer>(4, 6),
-		test3 = new Interval<Integer>(7, 10);
+		test2 = new Interval<Integer>(4, 5),
+		test3 = new Interval<Integer>(5, 10);
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -23,7 +23,9 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#hashCode()
 	 */
 	public void testHashCode() {
-		fail("Not yet implemented");
+		assertNotSame(test1.hashCode(), test2.hashCode());
+		assertNotSame(test2.hashCode(), test3.hashCode());
+		assertNotSame(test1.hashCode(), test3.hashCode());
 	}
 
 	/**
@@ -31,7 +33,8 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#getLowerBound()
 	 */
 	public void testGetLowerBound() {
-		fail("Not yet implemented");
+		assertEquals(test1.getLowerBound().intValue(), 1);
+		assertEquals(test3.getLowerBound().intValue(), 5);
 	}
 
 	/**
@@ -39,7 +42,8 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#getUpperBound()
 	 */
 	public void testGetUpperBound() {
-		fail("Not yet implemented");
+		assertEquals(test1.getUpperBound(), test2.getUpperBound());
+		assertEquals(test2.getUpperBound(), test3.getLowerBound());
 	}
 
 	/**
@@ -47,12 +51,24 @@ public class IntervalTestCase extends TestCase {
 	 * @see Interval#equals(Object)
 	 */
 	public void testEqualsObject() {
-		fail("Not yet implemented");
+		assertEquals(test1, new Interval<Integer>(1, 5));
+		assertEquals(test2, new Interval<Integer>(4, 5));
+		assertNotEquals(test1, test2);
 	}
 	
+	private void assertNotEquals(Object a, Object b) {
+		if (a.equals(b)) fail();
+	}
+
+	/**
+	 * Test swapped bounds
+	 * @see Interval#Interval(Comparable, Comparable)
+	 */
 	public void testSwappedBounds() {
 		assertEquals(new Interval<Integer>(1, 10),
 				new Interval<Integer>(10,1));
+		assertEquals(new Interval<Double>(.6, .888),
+				new Interval<Double>(.888, .6));
 	}
 
 }

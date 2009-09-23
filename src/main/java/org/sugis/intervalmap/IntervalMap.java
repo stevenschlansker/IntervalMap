@@ -17,7 +17,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 @NotThreadSafe
 public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>, V> {
 
-	public Set<Entry<Interval<K>, V>> getContaining(K point) {
+	public IntervalMap<K, V> getContaining(K point) {
 		return null;
 	}
 	
