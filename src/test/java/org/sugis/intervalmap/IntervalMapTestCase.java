@@ -1,8 +1,5 @@
 package org.sugis.intervalmap;
 
-import java.util.Set;
-import java.util.Map.Entry;
-
 import junit.framework.TestCase;
 
 /**
