@@ -1,5 +1,9 @@
 package org.sugis.intervalmap;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.Map.Entry;
+
 import junit.framework.TestCase;
 
 /**
@@ -70,40 +74,81 @@ public class IntervalMapTestCase extends TestCase {
 		assertFalse(test.containsValue(new Interval<Integer>(-5, 10)));
 	}
 
+	/**
+	 * Test entrySet
+	 * @see IntervalMap#entrySet()
+	 */
 	public void testEntrySet() {
-		fail("Not yet implemented");
+		Set<Entry<Interval<Integer>, String>> eSet = test.entrySet();
+		assertEquals(test.size(), test.entrySet().size());
+		for (Entry<Interval<Integer>, String> e : eSet) {
+			assertTrue(test.containsKey(e.getKey()));
+			assertTrue(test.containsValue(e.getValue()));
+		}
 	}
 
+	/**
+	 * Test get
+	 * @see IntervalMap#get(Object)
+	 */
 	public void testGet() {
-		fail("Not yet implemented");
+		assertEquals(test.get(new Interval<Integer>(3, 5)), "threefive");
+		assertEquals(test.get(new Interval<Integer>(5, 10)), "fiveten");
+		assertEquals(test.get(new Interval<Integer>(5, 0)), "zerofive");
+		assertEquals(test.get(new Interval<Integer>(-5, 10)), "minusfiveten");
 	}
 
+	/**
+	 * Test isEmpty
+	 * @see IntervalMap#isEmpty()
+	 */
 	public void testIsEmpty() {
-		fail("Not yet implemented");
+		assertFalse(test.isEmpty());
+		test.clear();
+		assertTrue(test.isEmpty());
 	}
 
+	/**
+	 * Test keySet
+	 * @see IntervalMap#keySet()
+	 */
 	public void testKeySet() {
 		fail("Not yet implemented");
 	}
 
+	/**
+	 * Test put
+	 * @see IntervalMap#put(Interval, Object)
+	 */
 	public void testPut() {
-		fail("Not yet implemented");
+		int oldHashCode = test.hashCode();
+		assertEquals(4, test.size());
+		test.put(new Interval<Integer>(4,5), "fourfive");
+		assertEquals(5, test.size());
+		assertNotSame(test.hashCode(), oldHashCode);
 	}
 
-	public void testPutAll() {
-		fail("Not yet implemented");
-	}
-
+	/**
+	 * Test remove
+	 * @see IntervalMap#remove(Object)
+	 */
 	public void testRemove() {
-		fail("Not yet implemented");
+		assertEquals(4, test.size());
+		test.remove(new Interval<Integer>(5,10));
+		assertEquals(3, test.size());
 	}
 
-	public void testSize() {
-		fail("Not yet implemented");
-	}
-
+	/**
+	 * Test values
+	 * @see IntervalMap#values()
+	 */
 	public void testValues() {
-		fail("Not yet implemented");
+		Collection<String> values = test.values();
+		assertTrue(values.contains("fiveten"));
+		assertTrue(values.contains("threefive"));
+		assertTrue(values.contains("minusfiveten"));
+		assertTrue(values.contains("zerofive"));
+		assertEquals(4, values.size());
 	}
 
 }
