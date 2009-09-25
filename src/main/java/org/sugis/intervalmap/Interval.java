@@ -11,10 +11,9 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>> {
-
-	/* begin <= end */
+	/* lower <= upper */
 	private final K lower, upper;
-	
+
 	/**
 	 * Construct a new Interval
 	 * @param lower_in the beginning of the interval
@@ -29,7 +28,7 @@ public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>
 			upper = upper_in;
 		}
 	}
-	
+
 	/**
 	 * Determine if two Intervals overlap.  Two intervals that share
 	 * a bound are considered to overlap for the purposes of this method.
@@ -40,22 +39,22 @@ public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>
 	    return lower.compareTo(other.getUpperBound()) <= 0 &&
 	           upper.compareTo(other.getLowerBound()) >= 0;
 	}
-	
+
 	/**
 	 * @return the lower bound given at construction
 	 */
 	public K getLowerBound() { return lower; }
-	
+
 	/**
 	 * @return the upper bound given at construction
 	 */
 	public K getUpperBound() { return upper; }
-	
+
 	@Override
 	public String toString() {
 		return "Interval[" + lower + "," + upper + "]";
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (! (obj instanceof Interval<?>) )
@@ -63,7 +62,7 @@ public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>
 		Interval<?> other = (Interval<?>) obj;
 		return other.upper.equals(upper) && other.lower.equals(lower);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return lower.hashCode() ^ upper.hashCode();
