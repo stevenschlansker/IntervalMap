@@ -55,7 +55,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		Boolean result = traverse(new Traversal<Boolean, Void>() {
 			@Override
 			Boolean visit(IntervalNode node) {
-				if (node.value.equals(value)) return true;
+				if (node.value.equals(value)) return Boolean.TRUE;
 				return null;
 			}
 		});
@@ -160,6 +160,18 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	public V remove(Object key) {
 		List<IntervalNode> trace = new LinkedList<IntervalNode>();
 		IntervalNode node = findUnchecked(key, root, trace);
+		if (node.left == null && node.right == null) {
+			IntervalNode parent = trace.get(0);
+			if (parent.left == node) {
+				parent.left = null;
+				parent.leftCount = 0;
+			} else {
+				assert parent.right == node;
+				parent.right = null;
+				parent.rightCount = 0;
+			}
+			return node.value;
+		}
 		throw new AssertionError();
 	}
 
@@ -183,7 +195,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		if (current == null) return null;
 		if (current.interval.equals(key))
 			return current;
-		trace.add(current);
+		trace.add(0,current);
 		if (current.interval.getLowerBound().compareTo(key.getLowerBound()) < 0) 
 			return find(key, current.right, trace);
 		else
