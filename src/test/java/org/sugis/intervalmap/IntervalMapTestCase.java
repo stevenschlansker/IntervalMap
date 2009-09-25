@@ -13,15 +13,23 @@ import junit.framework.TestCase;
  */
 public class IntervalMapTestCase extends TestCase {
 
+	private static final String ZEROFIVESTRING = "zerofive";
+	private static final String MINUSFIVETENSTRING = "minusfiveten";
+	private static final String THREEFIVESTRING = "threefive";
+	private static final String FIVETENSTRING = "fiveten";
+	private static final Interval<Integer> ZEROFIVEINTERVAL = new Interval<Integer>(0, 5);
+	private static final Interval<Integer> MINUSFIVETENINTERVAL = new Interval<Integer>(10, -5);
+	private static final Interval<Integer> THREEFIVEINTERVAL = new Interval<Integer>(3, 5);
+	private static final Interval<Integer> FIVETENINTERVAL = new Interval<Integer>(5, 10);
 	private IntervalMap<Integer, String> test = new IntervalMap<Integer, String>();
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		test.put(new Interval<Integer>(5, 10), "fiveten");
-		test.put(new Interval<Integer>(3, 5), "threefive");
-		test.put(new Interval<Integer>(10, -5), "minusfiveten");
-		test.put(new Interval<Integer>(0, 5), "zerofive");
+		test.put(FIVETENINTERVAL, FIVETENSTRING);
+		test.put(THREEFIVEINTERVAL, THREEFIVESTRING);
+		test.put(MINUSFIVETENINTERVAL, MINUSFIVETENSTRING);
+		test.put(ZEROFIVEINTERVAL, ZEROFIVESTRING);
 	}
 
 	/**
@@ -30,10 +38,10 @@ public class IntervalMapTestCase extends TestCase {
 	 */
 	public void testGetContaining() {
 		IntervalMap<Integer, String> result = test.getContaining(0);
-		assertTrue(result.containsValue("minusfiveten"));
-		assertTrue(result.containsValue("zerofive"));
-		assertFalse(result.containsValue("fiveten"));
-		assertFalse(result.containsValue("threefive"));
+		assertTrue(result.containsValue(MINUSFIVETENSTRING));
+		assertTrue(result.containsValue(ZEROFIVESTRING));
+		assertFalse(result.containsValue(FIVETENSTRING));
+		assertFalse(result.containsValue(THREEFIVESTRING));
 	}
 
 	/**
@@ -43,8 +51,8 @@ public class IntervalMapTestCase extends TestCase {
 	public void testClear() {
 		test.clear();
 		assertEquals(0, test.size());
-		assertFalse(test.containsKey(new Interval<Integer>(3, 5)));
-		assertFalse(test.containsValue("zerofive"));
+		assertFalse(test.containsKey(THREEFIVEINTERVAL));
+		assertFalse(test.containsValue(ZEROFIVESTRING));
 	}
 
 	/**
@@ -52,8 +60,8 @@ public class IntervalMapTestCase extends TestCase {
 	 * @see IntervalMap#containsKey(Object)
 	 */
 	public void testContainsKey() {
-		assertTrue(test.containsKey(new Interval<Integer>(3, 5)));
-		assertTrue(test.containsKey(new Interval<Integer>(5, 10)));
+		assertTrue(test.containsKey(THREEFIVEINTERVAL));
+		assertTrue(test.containsKey(FIVETENINTERVAL));
 		assertTrue(test.containsKey(new Interval<Integer>(5, 0)));
 		assertTrue(test.containsKey(new Interval<Integer>(-5, 10)));
 		assertFalse(test.containsKey(new Interval<Integer>(2, 5)));
@@ -66,10 +74,10 @@ public class IntervalMapTestCase extends TestCase {
 	 * @see IntervalMap#containsValue(Object)
 	 */
 	public void testContainsValue() {
-		assertTrue(test.containsValue("fiveten"));
-		assertTrue(test.containsValue("threefive"));
-		assertTrue(test.containsValue("minusfiveten"));
-		assertTrue(test.containsValue("zerofive"));
+		assertTrue(test.containsValue(FIVETENSTRING));
+		assertTrue(test.containsValue(THREEFIVESTRING));
+		assertTrue(test.containsValue(MINUSFIVETENSTRING));
+		assertTrue(test.containsValue(ZEROFIVESTRING));
 		assertFalse(test.containsValue("blahblah"));
 		assertFalse(test.containsValue(new Interval<Integer>(-5, 10)));
 	}
@@ -92,10 +100,10 @@ public class IntervalMapTestCase extends TestCase {
 	 * @see IntervalMap#get(Object)
 	 */
 	public void testGet() {
-		assertEquals(test.get(new Interval<Integer>(3, 5)), "threefive");
-		assertEquals(test.get(new Interval<Integer>(5, 10)), "fiveten");
-		assertEquals(test.get(new Interval<Integer>(5, 0)), "zerofive");
-		assertEquals(test.get(new Interval<Integer>(-5, 10)), "minusfiveten");
+		assertEquals(test.get(THREEFIVEINTERVAL), THREEFIVESTRING);
+		assertEquals(test.get(FIVETENINTERVAL), FIVETENSTRING);
+		assertEquals(test.get(new Interval<Integer>(5, 0)), ZEROFIVESTRING);
+		assertEquals(test.get(new Interval<Integer>(-5, 10)), MINUSFIVETENSTRING);
 	}
 
 	/**
@@ -138,7 +146,7 @@ public class IntervalMapTestCase extends TestCase {
 	 */
 	public void testRemove() {
 		assertEquals(4, test.size());
-		test.remove(new Interval<Integer>(5,10));
+		test.remove(FIVETENINTERVAL);
 		assertEquals(3, test.size());
 	}
 
@@ -148,10 +156,10 @@ public class IntervalMapTestCase extends TestCase {
 	 */
 	public void testValues() {
 		Collection<String> values = test.values();
-		assertTrue(values.contains("fiveten"));
-		assertTrue(values.contains("threefive"));
-		assertTrue(values.contains("minusfiveten"));
-		assertTrue(values.contains("zerofive"));
+		assertTrue(values.contains(FIVETENSTRING));
+		assertTrue(values.contains(THREEFIVESTRING));
+		assertTrue(values.contains(MINUSFIVETENSTRING));
+		assertTrue(values.contains(ZEROFIVESTRING));
 		assertEquals(4, values.size());
 	}
 
