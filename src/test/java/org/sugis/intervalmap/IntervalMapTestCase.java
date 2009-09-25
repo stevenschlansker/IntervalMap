@@ -113,7 +113,11 @@ public class IntervalMapTestCase extends TestCase {
 	 * @see IntervalMap#keySet()
 	 */
 	public void testKeySet() {
-		fail("Not yet implemented");
+		Set<Interval<Integer>> keySet = test.keySet();
+		assertEquals(test.size(), keySet.size());
+		for (Interval<Integer> key : keySet) {
+			assertTrue(test.containsKey(key));
+		}
 	}
 
 	/**

@@ -5,10 +5,11 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -25,13 +26,12 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	private class IntervalNode {
 		Interval<K> interval;
 		K maxChildValue;
+		int maxChildDepth, leftCount, rightCount;
 		V value;
 		IntervalNode left, right;
 	}
 	
 	private abstract class Traversal<R, A> {
-		A accumulator;
-		A getAccumulator() { return accumulator; }
 		/** return null to continue traversal */
 		abstract R visit(IntervalNode node);
 	}
@@ -42,7 +42,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	 * @param point
 	 * @return
 	 */
-	public IntervalMap<K, V> getContaining(K point) {
+	public IntervalMap<K, V> getContaining(@Nonnull K point) {
 		throw new AssertionError();
 	}
 	
@@ -52,7 +52,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 
 	public boolean containsKey(Object key) {
 		if (! (key instanceof Interval<?>) || root == null) return false;
-		throw new AssertionError();
+		return get(key) != null;
 	}
 
 	public boolean containsValue(final Object value) {
@@ -63,11 +63,11 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 				return null;
 			}
 		});
-		if (result == true) return true; /* necessary because result could be null! */
+		if (result == Boolean.TRUE) return true; /* necessary because result could be null */
 		return false;
 	}
 
-	public Set<Map.Entry<Interval<K>, V>> entrySet() {
+	public Set<Entry<Interval<K>, V>> entrySet() {
 		final Set<Entry<Interval<K>, V>> result = new HashSet<Entry<Interval<K>,V>>();
 		traverse(new Traversal<Void, Void>() {
 			@Override
@@ -90,7 +90,9 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	}
 
 	public V get(Object key) {
-		throw new AssertionError();
+		IntervalNode node = findUnchecked(key, root, new LinkedList<IntervalNode>());
+		if (node == null) return null;
+		return node.value;
 	}
 
 	public boolean isEmpty() {
@@ -109,30 +111,92 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		return result;
 	}
 
-	public V put(Interval<K> key, V value) {
-		throw new AssertionError();
+	public V put(@Nonnull Interval<K> key, V value) {
+		IntervalNode newborn = new IntervalNode();
+		newborn.interval = key;
+		newborn.value = value;
+		if (root == null)
+			root = newborn;
+		else
+			return put(root, newborn);
+		return null;
 	}
 
-	public void putAll(Map<? extends Interval<K>, ? extends V> m) {
+	private V put(@Nonnull IntervalNode top, @Nonnull IntervalNode newborn) {
+		if (top.interval.equals(newborn.interval)) {
+			V oldvalue = top.value;
+			top.value = newborn.value;
+			return oldvalue;
+		}
+		if (top.interval.getLowerBound().compareTo(newborn.interval.getLowerBound()) < 0) {
+			if (top.right == null) {
+				top.right = newborn;
+				top.rightCount++;
+				top.maxChildDepth = Math.max(top.maxChildDepth, 1);
+				return null;
+			} else {
+				V result = put(top.right, newborn);
+				if (result == null) // a new node was added
+					top.rightCount++;
+				return result;
+			}
+		} else {
+			if (top.left == null) {
+				top.left = newborn;
+				top.leftCount++;
+				top.maxChildDepth = Math.max(top.maxChildDepth, 1);
+				return null;
+			} else {
+				V result = put(top.left, newborn);
+				if (result == null) // a new node was added
+					top.leftCount++;
+				return result;
+			}
+		}
+	}
+
+	public void putAll(@Nonnull Map<? extends Interval<K>, ? extends V> m) {
 		for (Entry<? extends Interval<K>, ? extends V> e : m.entrySet()) {
 			put(e.getKey(), e.getValue());
 		}
 	}
 
 	public V remove(Object key) {
+		List<IntervalNode> trace = new LinkedList<IntervalNode>();
+		IntervalNode node = findUnchecked(key, root, trace);
 		throw new AssertionError();
 	}
 
+	@SuppressWarnings("unchecked")
+	private IntervalNode findUnchecked(Object key, IntervalNode current, List<IntervalNode> trace) {
+		if (! (key instanceof Interval<?>))
+			return null;
+		Interval<?> ikey = (Interval<?>) key;
+		Class<?> paramClass = ikey.getLowerBound().getClass();
+		Class<?> intervalClass = root.interval.getLowerBound().getClass();
+		if (! (intervalClass.isAssignableFrom(paramClass)))
+			return null;
+		try {
+			return find((Interval<K>) key, current, trace);
+		} catch (ClassCastException e) {
+			return null;
+		}
+	}
+
+	private IntervalNode find(Interval<K> key, IntervalNode current, List<IntervalNode> trace) {
+		if (current == null) return null;
+		if (current.interval.equals(key))
+			return current;
+		trace.add(current);
+		if (current.interval.getLowerBound().compareTo(key.getLowerBound()) < 0) 
+			return find(key, current.right, trace);
+		else
+			return find(key, current.left, trace);
+	}
+
 	public int size() {
-		Traversal<Void, Integer> t = new Traversal<Void, Integer>() {
-			@Override
-			Void visit(IntervalNode node) {
-				accumulator = accumulator + 1;
-				return null;
-			}
-		};
-		traverse(t);
-		return t.getAccumulator();
+		if (root == null) return 0;
+		return root.leftCount + root.rightCount + 1;
 	}
 
 	public Collection<V> values() {
@@ -147,7 +211,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		return result;
 	}
 	
-	private <R> R traverse(Traversal<R, ?> t) {
+	private <R> R traverse(@Nonnull Traversal<R, ?> t) {
 		Deque<IntervalNode> queue = new LinkedList<IntervalNode>();
 		queue.offerFirst(root);
 		while (!queue.isEmpty()) {
