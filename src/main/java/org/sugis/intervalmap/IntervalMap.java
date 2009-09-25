@@ -206,7 +206,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		});
 		return result;
 	}
-	
+
 	private <R> R traverse(@Nonnull Traversal<R, ?> t) {
 		Deque<IntervalNode> queue = new LinkedList<IntervalNode>();
 		queue.offerFirst(root);
@@ -220,5 +220,4 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		}
 		return null;
 	}
-
 }
