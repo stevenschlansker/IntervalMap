@@ -29,6 +29,13 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		int maxChildDepth, leftCount, rightCount;
 		V value;
 		IntervalNode left, right;
+		@Override
+		public String toString() { return toString(""); }
+		String toString(String tabs) {
+			return tabs + interval + " => " + value + "(max subinterval end = " + maxChildIntervalEnd + ")\n" +
+				(left == null ? "" : left.toString(tabs + "\t") + "\n") +
+				(right == null ? "" : right.toString(tabs + "\t"));
+		}
 	}
 
 	private abstract class Traversal<R> {
