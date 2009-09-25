@@ -74,5 +74,12 @@ public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>
 			return getUpperBound().compareTo(o.getUpperBound());
 		return comparison;
 	}
-	
+
+	int compareTo(K o) {
+		if (getLowerBound().compareTo(o) < 0)
+			return -1;
+		if (getUpperBound().compareTo(o) > 0)
+			return  1;
+		return 0;
+	}
 }

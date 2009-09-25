@@ -25,13 +25,13 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 
 	private class IntervalNode {
 		Interval<K> interval;
-		K maxChildValue;
+		K maxChildIntervalEnd;
 		int maxChildDepth, leftCount, rightCount;
 		V value;
 		IntervalNode left, right;
 	}
 
-	private abstract class Traversal<R, A> {
+	private abstract class Traversal<R> {
 		/** return null to continue traversal */
 		abstract R visit(IntervalNode node);
 	}
@@ -39,9 +39,22 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	private IntervalNode root;
 
 	public IntervalMap<K, V> getContaining(@Nonnull K point) {
-		throw new AssertionError();
+		IntervalMap<K, V> result = new IntervalMap<K, V>();
+		find(point, root, result);
+		return result;
 	}
 	
+	private void find(K point, IntervalNode current, IntervalMap<K, V> result) {
+		if (current == null) return;
+		if (current.maxChildIntervalEnd == null) return; // no children
+		if (current.maxChildIntervalEnd.compareTo(point) < 0) return;
+		if (current.left != null) find(point, current.left, result);
+		if (current.interval.compareTo(point) == 0) result.put(current.interval, current.value);
+		if (point.compareTo(current.interval.getLowerBound()) < 0)
+			return;
+		if (current.right != null) find(point, current.right, result);
+	}
+
 	public void clear() {
 		root = null;
 	}
@@ -52,7 +65,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	}
 
 	public boolean containsValue(final Object value) {
-		Boolean result = traverse(new Traversal<Boolean, Void>() {
+		Boolean result = traverse(new Traversal<Boolean>() {
 			@Override
 			Boolean visit(IntervalNode node) {
 				if (node.value.equals(value)) return Boolean.TRUE;
@@ -65,7 +78,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 
 	public Set<Entry<Interval<K>, V>> entrySet() {
 		final Set<Entry<Interval<K>, V>> result = new HashSet<Entry<Interval<K>,V>>();
-		traverse(new Traversal<Void, Void>() {
+		traverse(new Traversal<Void>() {
 			@Override
 			Void visit(final IntervalNode node) {
 				result.add(new Entry<Interval<K>, V>() {
@@ -97,7 +110,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 
 	public Set<Interval<K>> keySet() {
 		final Set<Interval<K>> result = new HashSet<Interval<K>>();
-		traverse(new Traversal<Void, Void>() {
+		traverse(new Traversal<Void>() {
 			@Override
 			Void visit(final IntervalNode node) {
 				result.add(node.interval);
@@ -128,6 +141,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 			if (top.right == null) {
 				top.right = newborn;
 				top.rightCount++;
+				adjustMaxChildInterval(top, newborn);
 				top.maxChildDepth = Math.max(top.maxChildDepth, 1);
 				return null;
 			} else {
@@ -140,6 +154,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 			if (top.left == null) {
 				top.left = newborn;
 				top.leftCount++;
+				adjustMaxChildInterval(top, newborn);
 				top.maxChildDepth = Math.max(top.maxChildDepth, 1);
 				return null;
 			} else {
@@ -149,6 +164,12 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 				return result;
 			}
 		}
+	}
+
+	private void adjustMaxChildInterval(IntervalNode top, IntervalNode newborn) {
+		if (top.maxChildIntervalEnd == null || 
+			top.maxChildIntervalEnd.compareTo(newborn.interval.getUpperBound()) < 0)
+			top.maxChildIntervalEnd = newborn.interval.getUpperBound();
 	}
 
 	public void putAll(@Nonnull Map<? extends Interval<K>, ? extends V> m) {
@@ -220,7 +241,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 
 	public Collection<V> values() {
 		final Collection<V> result = new ArrayList<V>();
-		traverse(new Traversal<Void, Void>() {
+		traverse(new Traversal<Void>() {
 			@Override
 			Void visit(final IntervalNode node) {
 				result.add(node.value);
@@ -230,7 +251,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		return result;
 	}
 
-	private <R> R traverse(@Nonnull Traversal<R, ?> t) {
+	private <R> R traverse(@Nonnull Traversal<R> t) {
 		Deque<IntervalNode> queue = new LinkedList<IntervalNode>();
 		queue.offerFirst(root);
 		while (!queue.isEmpty()) {
