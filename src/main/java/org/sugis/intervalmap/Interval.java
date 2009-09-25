@@ -10,7 +10,7 @@ import javax.annotation.concurrent.Immutable;
  * @param <K> the type of the bounds on the interval
  */
 @Immutable
-public class Interval<K extends Comparable<K>> {
+public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>> {
 
 	/* begin <= end */
 	private final K lower, upper;
@@ -67,6 +67,13 @@ public class Interval<K extends Comparable<K>> {
 	@Override
 	public int hashCode() {
 		return lower.hashCode() ^ upper.hashCode();
+	}
+
+	public int compareTo(Interval<K> o) {
+		int comparison = getLowerBound().compareTo(o.getLowerBound());
+		if (comparison == 0)
+			return getUpperBound().compareTo(o.getUpperBound());
+		return comparison;
 	}
 	
 }

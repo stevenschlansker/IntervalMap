@@ -124,7 +124,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 			top.value = newborn.value;
 			return oldvalue;
 		}
-		if (top.interval.getLowerBound().compareTo(newborn.interval.getLowerBound()) < 0) {
+		if (top.interval.compareTo(newborn.interval) < 0) {
 			if (top.right == null) {
 				top.right = newborn;
 				top.rightCount++;
@@ -171,6 +171,17 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 				parent.rightCount = 0;
 			}
 			return node.value;
+		}
+		if (node.left == null) {
+			IntervalNode successor = node.right;
+			IntervalNode successorsParent = node;
+			while (successor.left != null) {
+				successorsParent = successor;
+				successor = successor.left;
+			}
+			// more
+		} else {
+			// more
 		}
 		throw new AssertionError();
 	}
