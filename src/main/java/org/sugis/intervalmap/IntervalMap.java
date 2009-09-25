@@ -153,6 +153,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 				return null;
 			} else {
 				V result = put(top.right, newborn);
+				adjustMaxChildInterval(top, newborn);
 				if (result == null) // a new node was added
 					top.rightCount++;
 				return result;
@@ -166,6 +167,7 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 				return null;
 			} else {
 				V result = put(top.left, newborn);
+				adjustMaxChildInterval(top, newborn);
 				if (result == null) // a new node was added
 					top.leftCount++;
 				return result;
