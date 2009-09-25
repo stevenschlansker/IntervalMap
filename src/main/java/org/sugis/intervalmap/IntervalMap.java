@@ -22,7 +22,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>, V> {
-	
+
 	private class IntervalNode {
 		Interval<K> interval;
 		K maxChildValue;
@@ -30,18 +30,14 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 		V value;
 		IntervalNode left, right;
 	}
-	
+
 	private abstract class Traversal<R, A> {
 		/** return null to continue traversal */
 		abstract R visit(IntervalNode node);
 	}
-	
+
 	private IntervalNode root;
-	
-	/**
-	 * @param point
-	 * @return
-	 */
+
 	public IntervalMap<K, V> getContaining(@Nonnull K point) {
 		throw new AssertionError();
 	}
