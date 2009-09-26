@@ -76,9 +76,9 @@ public class Interval<K extends Comparable<K>> implements Comparable<Interval<K>
 	}
 
 	int compareTo(K o) {
-		if (getLowerBound().compareTo(o) < 0)
+		if (getLowerBound().compareTo(o) > 0)
 			return -1;
-		if (getUpperBound().compareTo(o) > 0)
+		if (getUpperBound().compareTo(o) < 0)
 			return  1;
 		return 0;
 	}

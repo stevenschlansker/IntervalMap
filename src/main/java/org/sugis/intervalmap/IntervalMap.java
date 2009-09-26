@@ -53,10 +53,10 @@ public class IntervalMap<K extends Comparable<K>, V> implements Map<Interval<K>,
 	
 	private void find(K point, IntervalNode current, IntervalMap<K, V> result) {
 		if (current == null) return;
+		if (current.interval.compareTo(point) == 0) result.put(current.interval, current.value);
 		if (current.maxChildIntervalEnd == null) return; // no children
 		if (current.maxChildIntervalEnd.compareTo(point) < 0) return;
 		if (current.left != null) find(point, current.left, result);
-		if (current.interval.compareTo(point) == 0) result.put(current.interval, current.value);
 		if (point.compareTo(current.interval.getLowerBound()) < 0)
 			return;
 		if (current.right != null) find(point, current.right, result);
